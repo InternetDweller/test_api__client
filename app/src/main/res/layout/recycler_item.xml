@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/label_bird_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="птица"
+        tools:layout_editor_absoluteX="51dp"
+        tools:layout_editor_absoluteY="49dp" />
+
+    <TextView
+        android:id="@+id/label_date_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="дата"
+        tools:layout_editor_absoluteX="56dp"
+        tools:layout_editor_absoluteY="103dp" />
+
+    <TextView
+        android:id="@+id/label_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="место"
+        tools:layout_editor_absoluteX="62dp"
+        tools:layout_editor_absoluteY="161dp" />
+</LinearLayout>
