@@ -2,9 +2,7 @@ package com.example.test_api;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -13,7 +11,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test_api.model.LoginResponse;
@@ -32,7 +29,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements RecyclerInterface {
+public class MainActivity extends AppCompatActivity implements RecyclerAdapter.RecyclerInterface, DialogueFragment.DialogueListener {
     final OkHttpClient client = new OkHttpClient();
     Gson gson = new Gson();
 
@@ -50,9 +47,12 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        mRecyclerView = findViewById(R.id.recycler_view);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            // Prevent overlapping
+            mRecyclerView.setPadding(0, 0, 0, systemBars.bottom);
             return insets;
         });
 
@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
 
         //=========================================================
 
-        mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
@@ -110,10 +109,24 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
         });
     }
 
-    @Override
+    @Override // RecyclerView Interface implementation
     public void onItemClickListener(int position, List<Sighting> data) {
         Sighting clickedSighting = data.get(position);
         DialogueFragment dialogue = DialogueFragment.newInstance(clickedSighting);
         dialogue.show(getSupportFragmentManager(), "LeDialogue");
+    }
+
+    @Override // Dialogue Interface implementation
+    public void onDeleteSighting(String id) {
+        //sightings.removeIf(el -> el.id.equals(id)); // Does not return index
+        int index = -1;
+        for (int i = 0; i < sightings.size(); i++) {
+            if (sightings.get(i).id.equals(id)) {
+                index = i;
+                sightings.remove(i);
+                break;
+            }
+        }
+        mAdapter.notifyItemRemoved(index);
     }
 }

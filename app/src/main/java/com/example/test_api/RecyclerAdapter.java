@@ -1,6 +1,5 @@
 package com.example.test_api;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,9 @@ import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private static List<Sighting> mDataset;
+    public interface RecyclerInterface {
+        void onItemClickListener(int position, List<Sighting> data);
+    }
     private final RecyclerInterface mRecyclerInterface;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

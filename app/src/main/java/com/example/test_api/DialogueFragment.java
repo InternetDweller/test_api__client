@@ -2,6 +2,7 @@ package com.example.test_api;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,16 +11,38 @@ import androidx.fragment.app.DialogFragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.test_api.model.Sighting;
 
-import java.io.Serializable;
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class DialogueFragment extends DialogFragment {
+    final OkHttpClient client = new OkHttpClient();
     private static final String ARG_SIGHTING = "sighting";
     private Sighting sighting;
+
+    //=========================================================
+
+    // To listen for element deletion in main activity
+    public interface DialogueListener {
+        void onDeleteSighting(String id);
+    }
+    private DialogueListener dialogueListener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        dialogueListener = (DialogueListener)context;
+    }
+
+    //=========================================================
 
     public DialogueFragment() {
         // Required empty public constructor
@@ -73,7 +96,23 @@ public class DialogueFragment extends DialogFragment {
                     startActivity(intent);
                 })
                 .setNegativeButton("Удалить", (dialog, id) -> {
-                    // TODO: handle delete
+                    Request request = new Request.Builder()
+                            .url("http://10.0.2.2:3000/api/v1/users/" + sighting.owner + "/sightings/" + sighting.id)
+                            .delete()
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                            if (dialogueListener != null) {
+                                dialogueListener.onDeleteSighting(sighting.id);
+                            }
+                        }
+                    });
                 });
 
         return builder.create();

@@ -9,13 +9,4 @@ public class Sighting implements Serializable {
     public String dateTime;
     public String location;
     public String notes;
-
-    public Sighting() {}
-    public Sighting(int mOwner, String mBirdName, String mDateTime, String mLocation, String mNotes) {
-        owner = mOwner;
-        birdName = mBirdName;
-        dateTime = mDateTime;
-        location = mLocation;
-        notes = mNotes;
-    }
 }

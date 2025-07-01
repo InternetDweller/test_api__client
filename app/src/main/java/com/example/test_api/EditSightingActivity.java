@@ -14,9 +14,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.test_api.model.LoginResponse;
-import com.example.test_api.model.Sighting;
-
 import java.io.IOException;
 
 import okhttp3.Call;
@@ -58,52 +55,8 @@ public class EditSightingActivity extends AppCompatActivity {
             labelEditSighting.setText(R.string.caption_label_create_sighting);
             buttonSave.setText(R.string.caption_button_add);
 
-            // Send a POST request (new sighting)
-            buttonSave.setOnClickListener(v -> {
-                String valueBirdName = editBirdName.getText().toString();
-                String valueDateTime = editDateTime.getText().toString();
-                String valueLocation = editLocation.getText().toString();
-                String valueNotes = editNotes.getText().toString();
-
-                if (!valueBirdName.isEmpty() && !valueDateTime.isEmpty() && !valueLocation.isEmpty()) {
-                    String urlString = "http://10.0.2.2:3000/api/v1/users/" + userId + "/sightings";
-                    String postString = "{"
-                            + "\"owner\":\"" + userId + "\","
-                            + "\"birdName\":\"" + valueBirdName + "\","
-                            + "\"dateTime\":\"" + valueDateTime + "\","
-                            + "\"location\":\"" + valueLocation + "\","
-                            + "\"notes\":\"" + valueNotes + "\""
-                            + "}";
-                    RequestBody postBody = RequestBody.create(postString, JSON);
-                    Request request = new Request.Builder()
-                            .url(urlString)
-                            .post(postBody)
-                            .build();
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            if (response.isSuccessful()) {
-                                goToMainActivity(userId);
-
-                            } else {
-                                System.err.println("Request failed: " + response.code());
-                            }
-                        }
-                    });
-
-                } else {
-                    Toast.makeText(this, "Не все поля заполнены!", Toast.LENGTH_SHORT).show();
-                }
-            });
-
         } else {
             // Get sighting data from extras
-            final String sightingId = getIntent().getStringExtra("sightingId");
             final String birdName = getIntent().getStringExtra("birdName");
             final String dateTime = getIntent().getStringExtra("dateTime");
             final String location = getIntent().getStringExtra("location");
@@ -114,54 +67,61 @@ public class EditSightingActivity extends AppCompatActivity {
             editDateTime.setText(dateTime);
             editLocation.setText(location);
             editNotes.setText(notes);
-
-            // Send a PUT request (updating existing sighting)
-            buttonSave.setOnClickListener(v -> {
-                String valueBirdName = editBirdName.getText().toString();
-                String valueDateTime = editDateTime.getText().toString();
-                String valueLocation = editLocation.getText().toString();
-                String valueNotes = editNotes.getText().toString();
-
-                if (!valueBirdName.isEmpty() && !valueDateTime.isEmpty() && !valueLocation.isEmpty()) {
-                    String urlString = "http://10.0.2.2:3000/api/v1/users/" + userId + "/sightings/" + sightingId;
-                    String postString = "{"
-                            + "\"birdName\":\"" + valueBirdName + "\","
-                            + "\"dateTime\":\"" + valueDateTime + "\","
-                            + "\"location\":\"" + valueLocation + "\","
-                            + "\"notes\":\"" + valueNotes + "\""
-                            + "}";
-                    RequestBody postBody = RequestBody.create(postString, JSON);
-                    Request request = new Request.Builder()
-                            .url(urlString)
-                            .put(postBody)
-                            .build();
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                            if (response.isSuccessful()) {
-                                goToMainActivity(userId);
-
-                            } else {
-                                System.err.println("Request failed: " + response.code());
-                            }
-                        }
-                    });
-
-                } else {
-                    Toast.makeText(this, "Не все поля заполнены!", Toast.LENGTH_SHORT).show();
-                }
-            });
         }
 
-        // If user clicks Cancel, just return to main activity
-        buttonCancel.setOnClickListener(v -> {
-            goToMainActivity(userId);
+        buttonSave.setOnClickListener(v -> {
+            String valueBirdName = editBirdName.getText().toString();
+            String valueDateTime = editDateTime.getText().toString();
+            String valueLocation = editLocation.getText().toString();
+            String valueNotes = editNotes.getText().toString();
+
+            if (!valueBirdName.isEmpty() && !valueDateTime.isEmpty() && !valueLocation.isEmpty()) {
+                String requestString = "{"
+                        + "\"birdName\":\"" + valueBirdName + "\","
+                        + "\"dateTime\":\"" + valueDateTime + "\","
+                        + "\"location\":\"" + valueLocation + "\","
+                        + "\"notes\":\"" + valueNotes + "\""
+                        + "}";
+                RequestBody requestBody = RequestBody.create(requestString, JSON);
+                Request request;
+                if (isCreatingNewSighting) {
+                    String urlString = "http://10.0.2.2:3000/api/v1/users/" + userId + "/sightings";
+                    request = new Request.Builder()
+                            .url(urlString)
+                            .post(requestBody)
+                            .build();
+                } else {
+                    final String sightingId = getIntent().getStringExtra("sightingId");
+                    String urlString = "http://10.0.2.2:3000/api/v1/users/" + userId + "/sightings/" + sightingId;
+                    request = new Request.Builder()
+                            .url(urlString)
+                            .put(requestBody)
+                            .build();
+                }
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                        if (response.isSuccessful()) {
+                            goToMainActivity(userId);
+
+                        } else {
+                            System.err.println("Request failed: " + response.code());
+                        }
+                    }
+                });
+
+            } else {
+                Toast.makeText(this, "Не все поля заполнены!", Toast.LENGTH_SHORT).show();
+            }
         });
+
+        // If user clicks Cancel, just return to main activity
+        buttonCancel.setOnClickListener(v -> goToMainActivity(userId) );
     }
 
     private void goToMainActivity(int userId) {
