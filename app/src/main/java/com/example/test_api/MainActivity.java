@@ -32,7 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RecyclerInterface {
     final OkHttpClient client = new OkHttpClient();
     Gson gson = new Gson();
 
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new RecyclerAdapter(sightings);
+        mAdapter = new RecyclerAdapter(sightings, this);
         mRecyclerView.setAdapter(mAdapter);
 
         //=========================================================
@@ -108,5 +108,11 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra("isCreatingNewSighting", true);
             startActivity(intent);
         });
+    }
+
+    @Override
+    public void onItemClickListener(int position, List<Sighting> data) {
+        Sighting clickedSighting = data.get(position);
+        Log.d("RVCLICK", clickedSighting.birdName);
     }
 }

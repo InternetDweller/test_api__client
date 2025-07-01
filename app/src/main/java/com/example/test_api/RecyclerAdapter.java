@@ -14,30 +14,40 @@ import com.example.test_api.model.Sighting;
 import java.util.List;
 
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-    private List<Sighting> mDataset;
+    private static List<Sighting> mDataset;
+    private final RecyclerInterface mRecyclerInterface;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView mBirdName;
         public TextView mDateTime;
         public TextView mLocation;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, RecyclerInterface recyclerInterface) {
             super(v);
             mBirdName = v.findViewById(R.id.label_bird_name);
             mDateTime = v.findViewById(R.id.label_date_time);
             mLocation = v.findViewById(R.id.label_location);
+            v.setOnClickListener(view -> {
+                if (recyclerInterface != null) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        recyclerInterface.onItemClickListener(position, mDataset);
+                    }
+                }
+            });
         }
     }
 
-    public RecyclerAdapter(List<Sighting> dataset) {
+    public RecyclerAdapter(List<Sighting> dataset, RecyclerInterface recyclerInterface) {
         mDataset = dataset;
+        mRecyclerInterface = recyclerInterface;
     }
 
     @NonNull
     @Override
     public RecyclerAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent, false);
-        return new ViewHolder(v);
+        return new ViewHolder(v, mRecyclerInterface);
     }
 
     @Override
