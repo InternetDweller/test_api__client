@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.test_api.model.LoginResponse;
 import com.example.test_api.model.Sighting;
@@ -30,7 +33,15 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
     final OkHttpClient client = new OkHttpClient();
     Gson gson = new Gson();
-    List<Sighting> sightings;
+
+    //=========================================================
+
+    final List<Sighting> sightings = new ArrayList<>();
+    public RecyclerView mRecyclerView;
+    public RecyclerView.Adapter mAdapter;
+    public RecyclerView.LayoutManager mLayoutManager;
+
+    //=========================================================
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +61,18 @@ public class MainActivity extends AppCompatActivity {
             userId = extras.getInt("userId");
         }
 
-        TextView labelMain = findViewById(R.id.main_text_view);
-        labelMain.setText(labelMain.getText() + " " + userId);
+        //=========================================================
+
+        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new RecyclerAdapter(sightings);
+        mRecyclerView.setAdapter(mAdapter);
+
+        //=========================================================
 
         Request request = new Request.Builder()
                 .url("http://10.0.2.2:3000/api/v1/users/" + userId + "/sightings")
@@ -67,9 +88,12 @@ public class MainActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     final String responseBody = response.body().string();
                     // Iterative type to parse array from json
-                    Type listType = new TypeToken<List<Sighting>>() {}.getType();
+                    Type listType = new TypeToken<ArrayList<Sighting>>() {}.getType();
                     // Parse json string as array
-                    sightings = gson.fromJson(responseBody, listType);
+                    List<Sighting> tmp = gson.fromJson(responseBody, listType);
+                    sightings.clear();
+                    sightings.addAll(tmp);
+                    runOnUiThread(() -> mAdapter.notifyDataSetChanged());
 
                 } else {
                     System.err.println("Request failed: " + response.code());

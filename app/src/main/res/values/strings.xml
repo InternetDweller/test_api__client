@@ -3,4 +3,5 @@
     <string name="caption_edit_username">имя пользователя</string>
     <string name="caption_edit_password">пароль</string>
     <string name="caption_button_login">ВОЙТИ</string>
+    <string name="caption_label_my_sightings">Мои наблюдения</string>
 </resources>

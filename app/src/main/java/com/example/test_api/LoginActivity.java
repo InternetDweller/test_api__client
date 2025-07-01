@@ -73,12 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (responseParsed.success) {
                             switchActivity(responseParsed.userId);
                         } else {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(LoginActivity.this, responseParsed.message, Toast.LENGTH_SHORT).show();
-                                }
-                            });
+                            runOnUiThread(() -> Toast.makeText(LoginActivity.this, responseParsed.message, Toast.LENGTH_SHORT).show());
                         }
 
                     } else {
