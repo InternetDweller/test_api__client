@@ -4,4 +4,13 @@
     <string name="caption_edit_password">пароль</string>
     <string name="caption_button_login">ВОЙТИ</string>
     <string name="caption_label_my_sightings">Мои наблюдения</string>
+    <string name="caption_label_edit_sighting">Редактирование</string>
+    <string name="caption_label_create_sighting">Новое наблюдение</string>
+    <string name="caption_button_add">Добавить</string>
+    <string name="caption_button_save">Сохранить</string>
+    <string name="caption_button_cancel">Отмена</string>
+    <string name="captione_edit_bird_name">название птицы</string>
+    <string name="caption_edit_date_time">дата и время</string>
+    <string name="caption_edit_location">место</string>
+    <string name="caption_edit_notes">детали</string>
 </resources>

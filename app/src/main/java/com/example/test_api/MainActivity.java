@@ -1,7 +1,9 @@
 package com.example.test_api;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -55,11 +57,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Get data sent from another activity
-        int userId = 0;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            userId = extras.getInt("userId");
-        }
+        final int userId = getIntent().getIntExtra("userId", 0);
 
         //=========================================================
 
@@ -99,6 +97,16 @@ public class MainActivity extends AppCompatActivity {
                     System.err.println("Request failed: " + response.code());
                 }
             }
+        });
+
+        //=========================================================
+
+        Button buttonAddSighting = findViewById(R.id.button_add_sighting);
+        buttonAddSighting.setOnClickListener(v -> {
+            Intent intent = new Intent(this, EditSightingActivity.class);
+            intent.putExtra("userId", userId);
+            intent.putExtra("isCreatingNewSighting", true);
+            startActivity(intent);
         });
     }
 }

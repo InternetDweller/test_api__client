@@ -42,7 +42,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.d("ADAPTER", mDataset.get(0).birdName);
         holder.mBirdName.setText(mDataset.get(position).birdName);
         holder.mDateTime.setText(mDataset.get(position).dateTime);
         holder.mLocation.setText(mDataset.get(position).location);
@@ -50,7 +49,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public int getItemCount() {
-        Log.d("ITEMCOUNT", "" + mDataset.size());
         return mDataset.size();
     }
 }
