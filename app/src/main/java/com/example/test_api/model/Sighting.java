@@ -1,6 +1,8 @@
 package com.example.test_api.model;
 
-public class Sighting {
+import java.io.Serializable;
+
+public class Sighting implements Serializable {
     public String id;
     public int owner;
     public String birdName;

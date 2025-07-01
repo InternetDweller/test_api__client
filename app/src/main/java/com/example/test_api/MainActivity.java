@@ -113,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerInterface
     @Override
     public void onItemClickListener(int position, List<Sighting> data) {
         Sighting clickedSighting = data.get(position);
-        Log.d("RVCLICK", clickedSighting.birdName);
+        DialogueFragment dialogue = DialogueFragment.newInstance(clickedSighting);
+        dialogue.show(getSupportFragmentManager(), "LeDialogue");
     }
 }
